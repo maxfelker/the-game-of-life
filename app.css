@@ -1,0 +1,23 @@
+html body {
+  padding:0;
+  margin:0;
+}
+
+#grid {
+  position:fixed;
+  height: 100vh;
+  width: 100vw;
+  top:0;
+  left:0;
+  right:0;
+  bottom: 0;
+  background:#000;
+}
+
+.cell {
+  position: absolute;
+}
+
+.cell:hover {
+  background:#F00Baa;
+}
