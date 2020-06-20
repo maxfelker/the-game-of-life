@@ -1,14 +1,15 @@
 import Cell from "./cell/index.js";
 
+// TODOS
+// Break up constructor into helpers
+// How will we handle window resize?
 export default class Grid {
-
   constructor(scale = 100) {
     this.scale = scale;
     this.cellSize = Math.ceil(window.innerHeight / this.scale);
     this.cols = Math.ceil(window.innerWidth / this.cellSize);
     this.rows = Math.ceil(window.innerHeight / this.cellSize);
     this.cells = [];
-
     this.gridElement = document.createElement("div");
     this.gridElement.id = "grid";
     document.body.append(this.gridElement);
@@ -28,7 +29,7 @@ export default class Grid {
         this.cells.push(newCell);
       }
     }
-  }
+  };
 
   render() {
     this.createGrid();
@@ -36,9 +37,9 @@ export default class Grid {
       let cell = this.cells[i];
       cell.render(this.gridElement);
     }
-    /*console.log("Grid Rendered:");
-    console.log(`${this.cols} columns x ${this.rows} rows`);
-    console.log(`${this.cells.length} indvidual cells at ${this.cellSize} x ${this.cellSize}`);*/
   }
 
+  update = () => {
+    this.cells.filter((cell) => cell.alive).map((cell) => cell.getNeighbors());
+  };
 }

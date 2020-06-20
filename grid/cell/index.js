@@ -1,18 +1,12 @@
-// TODOS
-
-// Is cell alive or dead?
-// Display cell state to player
-// Getter / setter on state
-
-const NEIGHBORHOOD = {
-  N: [0, -1], 
-  NE: [1, -1], 
-  E: [1, 0], 
-  SE: [1, 1], 
+const CARDINAL = {
+  N: [0, -1],
+  NE: [1, -1],
+  E: [1, 0],
+  SE: [1, 1],
   S: [0, 1],
-  SW: [-1, 1], 
-  W: [-1, 0], 
-  NW: [-1, -1] 
+  SW: [-1, 1],
+  W: [-1, 0],
+  NW: [-1, -1],
 };
 
 export default class Cell {
@@ -20,6 +14,7 @@ export default class Cell {
     this.x = x;
     this.y = y;
     this.cellSize = cellSize;
+    this.active = false;
   }
 
   generateId(x, y) {
@@ -27,41 +22,59 @@ export default class Cell {
   }
 
   render(gridElement) {
-    const cellDiv = document.createElement("div");
-    cellDiv.id = this.generateId(this.x, this.y);
-    cellDiv.classList.add("cell");
-    cellDiv.style.height = this.cellSize;
-    cellDiv.style.width = this.cellSize;
-    cellDiv.style.top = this.y;
-    cellDiv.style.left = this.x;
-    gridElement.append(cellDiv);
-    cellDiv.onclick = this.getNeighbors;
+    this.domElement = document.createElement("div");
+    this.domElement.id = this.generateId(this.x, this.y);
+    this.domElement.classList.add("cell");
+    this.domElement.style.height = this.cellSize;
+    this.domElement.style.width = this.cellSize;
+    this.domElement.style.top = this.y;
+    this.domElement.style.left = this.x;
+    gridElement.append(this.domElement);
+    this.domElement.onclick = this.toggleState;
   }
 
-  predictNeighborCoords = (direction, originPosition) => {
+  predictNeighborCoords = (offset, originPosition) => {
     const { left, top } = originPosition;
     return {
-      x: direction[0] === 0 ? left : left + (direction[0] * this.cellSize),
-      y: direction[1] === 0 ? top : top + (direction[1] * this.cellSize),
+      x: offset[0] === 0 ? left : left + offset[0] * this.cellSize,
+      y: offset[1] === 0 ? top : top + offset[1] * this.cellSize,
     };
-  }
+  };
 
-  predictNeighborId = (direction, originPosition) => {
-    const coords = this.predictNeighborCoords(direction, originPosition);
+  predictNeighborId = (offset, originPosition) => {
+    const coords = this.predictNeighborCoords(offset, originPosition);
     return this.generateId(coords.x, coords.y);
   };
 
-  getNeighbors = (event) => {
-    event.target.classList.add("origin");
+  getNeighbors = () => {
     const originPosition = {
-      left: parseInt(event.target.style.left),
-      top: parseInt(event.target.style.top)
-    }; 
-    Object.keys(NEIGHBORHOOD).forEach((directional) => {
-      const direction = NEIGHBORHOOD[directional];
-      const neighborId = this.predictNeighborId(direction, originPosition);
-      const neighbor = document.getElementById(neighborId);
-      neighbor.classList.add("alive");
-    })
-  }
+      left: parseInt(this.domElement.style.left),
+      top: parseInt(this.domElement.style.top),
+    };
+    const neighborIds = Object.keys(CARDINAL).map((direction) => {
+      const offset = CARDINAL[direction];
+      return this.predictNeighborId(offset, originPosition);
+    });
+    neighborIds.map((id) => {
+      const neighbor = document.getElementById(id);
+      neighbor.classList.add("searching");
+    });
+  };
+
+  toggleState = () => {
+    if (this.alive) {
+      return this.die();
+    }
+    return this.live();
+  };
+
+  live = () => {
+    this.alive = true;
+    this.domElement.classList.add("alive");
+  };
+
+  die = () => {
+    this.alive = false;
+    this.domElement.classList.remove("alive");
+  };
 }
