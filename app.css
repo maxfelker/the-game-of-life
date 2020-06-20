@@ -18,6 +18,11 @@ html body {
   position: absolute;
 }
 
+.alive,
 .cell:hover {
   background:#F00Baa;
+}
+
+.origin {
+  border:1px solid green;
 }

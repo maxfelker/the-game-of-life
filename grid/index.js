@@ -22,9 +22,9 @@ export default class Grid {
   }
 
   createGrid = () => {
-    for (let columNumber = 0; columNumber < this.cols; columNumber++) {
-      for (let rowNumber = 0; rowNumber < this.rows; rowNumber++) {
-        let newCell = this.createCell(columNumber, rowNumber);
+    for (let rowNumber = 0; rowNumber < this.rows; rowNumber++) {
+      for (let colNumber = 0; colNumber < this.cols; colNumber++) {
+        let newCell = this.createCell(colNumber, rowNumber);
         this.cells.push(newCell);
       }
     }
@@ -36,6 +36,9 @@ export default class Grid {
       let cell = this.cells[i];
       cell.render(this.gridElement);
     }
+    /*console.log("Grid Rendered:");
+    console.log(`${this.cols} columns x ${this.rows} rows`);
+    console.log(`${this.cells.length} indvidual cells at ${this.cellSize} x ${this.cellSize}`);*/
   }
 
 }
