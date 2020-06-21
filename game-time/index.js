@@ -12,12 +12,17 @@ export default class GameTime {
       console.error("Time has already started, cancelling!");
       return;
     }
-    const intervalMethod = () => {
-      callback();
-      this.incrementGeneration();
-      this.updateUI();
-    };
-    this.interval = setInterval(intervalMethod, this.intervalDelay);
+    
+    this.interval = setInterval(() => {
+      this.next(callback);
+    }, this.intervalDelay);
+  }
+
+  next = (callback) => {
+    console.log('Next gen started');
+    callback();
+    this.incrementGeneration();
+    this.updateUI();
   }
 
   stop = () => {
@@ -27,6 +32,7 @@ export default class GameTime {
 
   incrementGeneration = () => {
     this.currentGeneration++;
+    console.log('Generation incremented');
   };
 
   setUI = () => {
@@ -35,5 +41,6 @@ export default class GameTime {
 
   updateUI = () => {
     this.uiElement.innerHTML = this.currentGeneration;
+    console.log('UI Updated');
   };
 }

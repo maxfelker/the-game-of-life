@@ -6,6 +6,10 @@ const time = new GameTime();
 window.addEventListener("DOMContentLoaded", (event) => {
   const grid = new Grid();
 
+  document.getElementById("next").onclick = function () {
+    time.next(grid.update);
+  };
+
   document.getElementById("start").onclick = function () {
     time.start(grid.update);
   };

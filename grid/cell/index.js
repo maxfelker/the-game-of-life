@@ -76,7 +76,12 @@ export default class Cell {
   };
 
   getAliveNeighbors = (neighboringCells) => {
-    return neighboringCells.filter((cell) => cell.alive);
+    return neighboringCells.filter((cell) => {
+      if (!cell) {
+        return false;
+      }
+      return cell.alive;
+    });
   };
 
   scanNeighbors = (cells) => {
@@ -86,15 +91,24 @@ export default class Cell {
   };
 
   determineFate = (neighborsAlive) => {
-    if (neighborsAlive <= 4 || neighborsAlive === 0 || neighborsAlive === 1) {
-      this.die();
-      return;
+    if (this.alive) {
+      if (neighborsAlive === 0 || neighborsAlive === 1) {
+        console.log(`${this.id} - died of isolation!`);
+        this.die();
+        return;
+      }
+      if (neighborsAlive >= 4) {
+        console.log(`${this.id} - died of overcrowding!`);
+        this.die();
+        return;
+      }
+    } else {
+      if (neighborsAlive === 3) {
+        console.log(`${this.id} - was born!`);
+        this.live();
+        return;
+      }
     }
-    if (!this.alive && neighborsAlive === 3) {
-      this.live();
-      return;
-    }
-    console.log("got to live");
   };
 
   live = () => {
