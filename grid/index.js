@@ -40,6 +40,10 @@ export default class Grid {
   }
 
   update = () => {
-    this.cells.filter((cell) => cell.alive).map((cell) => cell.getNeighbors());
+    this.cells
+      .filter((cell) => cell.alive)
+      .map((cell) => {
+        cell.scanNeighbors(this.cells);
+      });
   };
 }

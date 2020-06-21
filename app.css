@@ -1,6 +1,7 @@
 html body {
   padding:0;
   margin:0;
+  font-family: monospace;
 }
 
 #grid {
@@ -29,4 +30,12 @@ html body {
 
 .searching {
   border:1px solid green;
+}
+
+#currentGeneration {
+  position:fixed;
+  bottom:2rem;
+  right: 2rem;
+  z-index: 10;
+  color:#FFF;
 }

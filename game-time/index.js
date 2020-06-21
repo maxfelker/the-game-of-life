@@ -1,18 +1,20 @@
 export default class GameTime {
   constructor() {
     this.currentGeneration = 0;
-    this.generationsPerSecond = 10;
+    this.generationsPerSecond = 1;
     this.intervalDelay = Math.floor(1000 / this.generationsPerSecond);
   }
 
   start(callback) {
     if (this.interval) {
-      console.error("Already started");
+      console.error("Time has already started, cancelling!");
       return;
     }
+
+    this.createUI();
+
     const intervalMethod = () => {
-      this.nextGeneration();
-      console.log("generation updated! " + this.currentGeneration);
+      this.incrementGeneration();
       callback();
     };
 
@@ -20,5 +22,15 @@ export default class GameTime {
   }
 
   stop = () => clearInterval(this.interval);
-  nextGeneration = () => this.currentGeneration++;
+
+  incrementGeneration = () => {
+    this.currentGeneration++;
+    this.uiElement.innerHTML = `Current Generation ${this.currentGeneration}`;
+  };
+
+  createUI() {
+    this.uiElement = document.createElement("div");
+    this.uiElement.id = "currentGeneration";
+    document.body.append(this.uiElement);
+  }
 }

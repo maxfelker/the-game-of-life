@@ -14,23 +14,37 @@ export default class Cell {
     this.x = x;
     this.y = y;
     this.cellSize = cellSize;
-    this.active = false;
+    this.id = this.generateId(x,y);
+  }
+
+  get alive() {
+    if(!this.domElement) return false;
+
+    return this.domElement.classList.contains("alive");
   }
 
   generateId(x, y) {
     return `cell-${x}-${y}`;
   }
 
-  render(gridElement) {
+  createCellElement() {
     this.domElement = document.createElement("div");
-    this.domElement.id = this.generateId(this.x, this.y);
+    this.domElement.id = this.id;
     this.domElement.classList.add("cell");
+  }
+
+  setCellPosition() {
     this.domElement.style.height = this.cellSize;
     this.domElement.style.width = this.cellSize;
     this.domElement.style.top = this.y;
     this.domElement.style.left = this.x;
+  }
+
+  render(gridElement) {
+    this.createCellElement();
+    this.setCellPosition();
     gridElement.append(this.domElement);
-    this.domElement.onclick = this.toggleState;
+    this.domElement.onmouseenter = this.toggleState;
   }
 
   predictNeighborCoords = (offset, originPosition) => {
@@ -46,7 +60,11 @@ export default class Cell {
     return this.generateId(coords.x, coords.y);
   };
 
-  getNeighbors = () => {
+  getCellById = (cells, id) => {
+    return cells.filter((cell) => cell.id === id)[0];
+  }
+
+  getNeighbors = (cells) => {
     const originPosition = {
       left: parseInt(this.domElement.style.left),
       top: parseInt(this.domElement.style.top),
@@ -55,11 +73,39 @@ export default class Cell {
       const offset = CARDINAL[direction];
       return this.predictNeighborId(offset, originPosition);
     });
-    neighborIds.map((id) => {
-      const neighbor = document.getElementById(id);
-      neighbor.classList.add("searching");
+    return neighborIds.map((id) => {
+      return this.getCellById(cells, id)
     });
   };
+
+  numberOfAliveNeighbors = (neighboringCells) => {
+    let aliveNeighbors = 0;
+    neighboringCells.forEach((cell) => {
+      if(cell.alive) {
+        aliveNeighbors++;
+      }
+    });
+    return aliveNeighbors;
+
+  }
+
+  scanNeighbors = (cells) => {
+    const neighboringCells = this.getNeighbors(cells);
+    const aliveNeighbors = this.numberOfAliveNeighbors(neighboringCells);
+    switch(aliveNeighbors) {
+      default:
+      case 0:
+      case 1:
+        return this.die();
+      
+      case 2:
+      case 3: 
+        return this.live();
+
+      case 4:
+        return this.die();
+    }
+  }
 
   toggleState = () => {
     if (this.alive) {
@@ -69,12 +115,10 @@ export default class Cell {
   };
 
   live = () => {
-    this.alive = true;
     this.domElement.classList.add("alive");
   };
 
   die = () => {
-    this.alive = false;
-    this.domElement.classList.remove("alive");
+     this.domElement.classList.remove("alive");
   };
 }
