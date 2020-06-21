@@ -17,6 +17,23 @@ This will server the app at [http://localhost:8000](http://localhost:8000)
 
 ### Rules of the game
 
+Rule from Conway at [@4:15 Inventing Game of Life (John Conway) - Numberphile](https://youtu.be/R9Plq-D1gEk?t=256)
+
+```
+if you are dead and you have exactly three alive neighbors, you are born next turn
+if you are alive have you have 2 or 3 alive neighbors, you survive 
+```
+
+Rule from Conway at [@1:10 Does John Conway hate his Game of Life? - Numberphile](https://youtu.be/E8kUJL04ELA?t=73)
+
+``` 
+Each cell has 8 distinct neighbors
+Neighbor is an adjacent cell  
+if the cell has four or more neighbors, they die
+if the cell has zero or one neighbor, they die
+if a cell is dead and has exactly three alive neighbors, the cell is born
+```
+
 Adapted from [bitstorm](https://bitstorm.org/gameoflife/)
 
 ```

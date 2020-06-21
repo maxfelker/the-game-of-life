@@ -5,8 +5,12 @@ const time = new GameTime();
 
 window.addEventListener("DOMContentLoaded", (event) => {
   const grid = new Grid();
-  time.start(grid.update);
-  //setTimeout(time.stop,10000);
+
+  document.getElementById("start").onclick = function () {
+    time.start(grid.update);
+  };
+
+  document.getElementById("stop").onclick = function () {
+    time.stop();
+  };
 });
-
-

@@ -33,9 +33,17 @@ html body {
 }
 
 #currentGeneration {
+  color:#FFF;
+}
+
+#nav {
   position:fixed;
-  bottom:2rem;
-  right: 2rem;
+  top:1rem;
+  right: 1rem;
   z-index: 10;
+  padding:0.5rem;
+}
+
+#nav p {
   color:#FFF;
 }

@@ -14,11 +14,11 @@ export default class Cell {
     this.x = x;
     this.y = y;
     this.cellSize = cellSize;
-    this.id = this.generateId(x,y);
+    this.id = this.generateId(x, y);
   }
 
   get alive() {
-    if(!this.domElement) return false;
+    if (!this.domElement) return false;
 
     return this.domElement.classList.contains("alive");
   }
@@ -44,74 +44,57 @@ export default class Cell {
     this.createCellElement();
     this.setCellPosition();
     gridElement.append(this.domElement);
-    this.domElement.onmouseenter = this.toggleState;
+    this.domElement.onclick = this.live;
   }
 
-  predictNeighborCoords = (offset, originPosition) => {
-    const { left, top } = originPosition;
+  predictNeighborCoords = (offset) => {
     return {
-      x: offset[0] === 0 ? left : left + offset[0] * this.cellSize,
-      y: offset[1] === 0 ? top : top + offset[1] * this.cellSize,
+      x: offset[0] === 0 ? this.x : this.x + offset[0] * this.cellSize,
+      y: offset[1] === 0 ? this.y : this.y + offset[1] * this.cellSize,
     };
   };
 
-  predictNeighborId = (offset, originPosition) => {
-    const coords = this.predictNeighborCoords(offset, originPosition);
+  predictNeighborId = (offset) => {
+    const coords = this.predictNeighborCoords(offset);
     return this.generateId(coords.x, coords.y);
   };
 
+  // get a single Cell based on id
   getCellById = (cells, id) => {
     return cells.filter((cell) => cell.id === id)[0];
-  }
+  };
 
+  // get an array of Cells back
   getNeighbors = (cells) => {
-    const originPosition = {
-      left: parseInt(this.domElement.style.left),
-      top: parseInt(this.domElement.style.top),
-    };
     const neighborIds = Object.keys(CARDINAL).map((direction) => {
       const offset = CARDINAL[direction];
-      return this.predictNeighborId(offset, originPosition);
+      return this.predictNeighborId(offset);
     });
     return neighborIds.map((id) => {
-      return this.getCellById(cells, id)
+      return this.getCellById(cells, id);
     });
   };
 
-  numberOfAliveNeighbors = (neighboringCells) => {
-    let aliveNeighbors = 0;
-    neighboringCells.forEach((cell) => {
-      if(cell.alive) {
-        aliveNeighbors++;
-      }
-    });
-    return aliveNeighbors;
-
-  }
+  getAliveNeighbors = (neighboringCells) => {
+    return neighboringCells.filter((cell) => cell.alive);
+  };
 
   scanNeighbors = (cells) => {
     const neighboringCells = this.getNeighbors(cells);
-    const aliveNeighbors = this.numberOfAliveNeighbors(neighboringCells);
-    switch(aliveNeighbors) {
-      default:
-      case 0:
-      case 1:
-        return this.die();
-      
-      case 2:
-      case 3: 
-        return this.live();
+    const aliveNeighbors = this.getAliveNeighbors(neighboringCells);
+    this.determineFate(aliveNeighbors.length);
+  };
 
-      case 4:
-        return this.die();
+  determineFate = (neighborsAlive) => {
+    if (neighborsAlive <= 4 || neighborsAlive === 0 || neighborsAlive === 1) {
+      this.die();
+      return;
     }
-  }
-
-  toggleState = () => {
-    if (this.alive) {
-      return this.die();
+    if (!this.alive && neighborsAlive === 3) {
+      this.live();
+      return;
     }
-    return this.live();
+    console.log("got to live");
   };
 
   live = () => {
@@ -119,6 +102,6 @@ export default class Cell {
   };
 
   die = () => {
-     this.domElement.classList.remove("alive");
+    this.domElement.classList.remove("alive");
   };
 }
