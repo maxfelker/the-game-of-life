@@ -10,7 +10,7 @@ export default class Grid {
     this.cols = Math.ceil(window.innerWidth / this.cellSize);
     this.rows = Math.ceil(window.innerHeight / this.cellSize);
     this.populateCells();
-    this.render();
+    window.addEventListener("DOMContentLoaded", this.render);
   }
 
   createCell(columNumber, rowNumber) {
@@ -28,14 +28,14 @@ export default class Grid {
     }
   };
 
-  renderCells() {
+  renderCells = () =>  {
     for (var i = 0; i < this.cells.length; i++) {
       let cell = this.cells[i];
       cell.render(this.gridElement);
     }
   }
 
-  render() {
+  render = () => {
     this.gridElement = document.createElement("div");
     this.gridElement.id = "grid";
     document.body.append(this.gridElement);
