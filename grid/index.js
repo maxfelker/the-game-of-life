@@ -10,18 +10,17 @@ export default class Grid {
     this.cols = Math.ceil(window.innerWidth / this.cellSize);
     this.rows = Math.ceil(window.innerHeight / this.cellSize);
     this.populateCells();
-    //this.cells[500].alive = true;
-    //this.cells[501].alive = true;
-    //this.cells[502].alive = true;
     window.addEventListener("DOMContentLoaded", this.render);
   }
 
+  // Create new Cell objects
   createCell(columNumber, rowNumber) {
     const x = this.cellSize * columNumber;
     const y = this.cellSize * rowNumber;
     return new Cell(x, y, this.cellSize);
   }
 
+  // Create all cells 
   populateCells = () => {
     for (let rowNumber = 0; rowNumber < this.rows; rowNumber++) {
       for (let colNumber = 0; colNumber < this.cols; colNumber++) {
@@ -31,6 +30,7 @@ export default class Grid {
     }
   };
 
+  // Tell each cell to render
   renderCells = () => {
     for (var i = 0; i < this.cells.length; i++) {
       let cell = this.cells[i];
@@ -38,6 +38,7 @@ export default class Grid {
     }
   };
 
+  // display the grid
   render = () => {
     this.gridElement = document.createElement("div");
     this.gridElement.id = "grid";
@@ -45,18 +46,25 @@ export default class Grid {
     this.renderCells();
   };
 
+  // called every new generation
   update = () => {
-    for (let i = 0; i < this.cells.length; i++) {
-      let cell = this.cells[i];
-      if(cell.alive){
+    // get all the alive cells
+    this.cells
+      .filter((cell) => cell.alive)
+      .map((cell) => {
+        // determine the cell's fate
         cell.determineFate(this.cells);
-        const neighbors = cell.getNeighbors(this.cells);
-        for (let n = 0; n < neighbors.length; n++) {
-          let neighbor = neighbors[n];
+        const neighbors = cell.getCellsFromNeighborhood(this.cells);
+        // deteremin cell's neighbor's fate
+        neighbors.forEach((neighbor) => {
           neighbor.determineFate(this.cells);
-        }
-      }      
-    }
+        });
+      });
+    // redraw the cells
     this.renderCells();
+  };
+
+  clear = () => {
+    this.cells.filter((cell) => cell.alive).forEach((cell) => cell.die());
   };
 }
