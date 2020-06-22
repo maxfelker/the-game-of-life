@@ -1,27 +1,17 @@
-const CARDINAL = {
-  N: [0, -1],
-  NE: [1, -1],
-  E: [1, 0],
-  SE: [1, 1],
-  S: [0, 1],
-  SW: [-1, 1],
-  W: [-1, 0],
-  NW: [-1, -1],
-};
-
 export default class Cell {
   constructor(x, y, cellSize) {
     this.x = x;
     this.y = y;
-    this.cellSize = cellSize;
     this.id = this.generateId(x, y);
+    this.cellSize = cellSize;
+    this.alive = false;
   }
 
-  get alive() {
+  /*get alive() {
     if (!this.domElement) return false;
 
     return this.domElement.classList.contains("alive");
-  }
+  }*/
 
   generateId(x, y) {
     return `cell-${x}-${y}`;
@@ -59,38 +49,25 @@ export default class Cell {
     return this.generateId(coords.x, coords.y);
   };
 
-  // get a single Cell based on id
-  getCellById = (cells, id) => {
-    return cells.filter((cell) => cell.id === id)[0];
-  };
-
   // get an array of Cells back
   getNeighbors = (cells) => {
-    const neighborIds = Object.keys(CARDINAL).map((direction) => {
-      const offset = CARDINAL[direction];
-      return this.predictNeighborId(offset);
-    });
-    return neighborIds.map((id) => {
-      return this.getCellById(cells, id);
-    });
+    const NEIGHBORHOOD = [
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1]
+    ];
+    const neighborIds = NEIGHBORHOOD.map(this.predictNeighborId);
+    return cells.filter((cell) => neighborIds.includes(cell.id));
   };
 
-  getAliveNeighbors = (neighboringCells) => {
-    return neighboringCells.filter((cell) => {
-      if (!cell) {
-        return false;
-      }
-      return cell.alive;
-    });
-  };
-
-  scanNeighbors = (cells) => {
+  determineFate = (cells) => {
     const neighboringCells = this.getNeighbors(cells);
-    const aliveNeighbors = this.getAliveNeighbors(neighboringCells);
-    this.determineFate(aliveNeighbors.length);
-  };
-
-  determineFate = (neighborsAlive) => {
+    const neighborsAlive = neighboringCells.filter((cell) => cell.alive).length;
     if (this.alive) {
       if (neighborsAlive === 0 || neighborsAlive === 1) {
         console.log(`${this.id} - died of isolation!`);
@@ -112,10 +89,12 @@ export default class Cell {
   };
 
   live = () => {
+    this.alive = true;
     this.domElement.classList.add("alive");
   };
 
   die = () => {
+    this.alive = false;
     this.domElement.classList.remove("alive");
   };
 }

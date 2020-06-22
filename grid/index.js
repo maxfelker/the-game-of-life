@@ -1,18 +1,15 @@
 import Cell from "./cell/index.js";
 
 // TODOS
-// Break up constructor into helpers
 // How will we handle window resize?
 export default class Grid {
   constructor(scale = 100) {
+    this.cells = [];
     this.scale = scale;
     this.cellSize = Math.ceil(window.innerHeight / this.scale);
     this.cols = Math.ceil(window.innerWidth / this.cellSize);
     this.rows = Math.ceil(window.innerHeight / this.cellSize);
-    this.cells = [];
-    this.gridElement = document.createElement("div");
-    this.gridElement.id = "grid";
-    document.body.append(this.gridElement);
+    this.populateCells();
     this.render();
   }
 
@@ -22,7 +19,7 @@ export default class Grid {
     return new Cell(x, y, this.cellSize);
   }
 
-  createGrid = () => {
+  populateCells = () => {
     for (let rowNumber = 0; rowNumber < this.rows; rowNumber++) {
       for (let colNumber = 0; colNumber < this.cols; colNumber++) {
         let newCell = this.createCell(colNumber, rowNumber);
@@ -31,19 +28,25 @@ export default class Grid {
     }
   };
 
-  render() {
-    this.createGrid();
+  renderCells() {
     for (var i = 0; i < this.cells.length; i++) {
       let cell = this.cells[i];
       cell.render(this.gridElement);
     }
   }
 
+  render() {
+    this.gridElement = document.createElement("div");
+    this.gridElement.id = "grid";
+    document.body.append(this.gridElement);
+    this.renderCells();
+  }
+
   update = () => {
     this.cells
       .filter((cell) => cell.alive)
       .map((cell) => {
-        cell.scanNeighbors(this.cells);
+        cell.determineFate(this.cells);
       });
   };
 }

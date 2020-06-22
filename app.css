@@ -32,6 +32,10 @@ html body {
   border:1px solid green;
 }
 
+.searching2 {
+  border:1px solid rebeccapurple;
+}
+
 #currentGeneration {
   color:#FFF;
 }
@@ -39,7 +43,7 @@ html body {
 #nav {
   position:fixed;
   top:1rem;
-  right: 1rem;
+  left: 1rem;
   z-index: 10;
   padding:0.5rem;
 }
