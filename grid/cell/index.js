@@ -7,12 +7,6 @@ export default class Cell {
     this.alive = false;
   }
 
-  /*get alive() {
-    if (!this.domElement) return false;
-
-    return this.domElement.classList.contains("alive");
-  }*/
-
   generateId(x, y) {
     return `cell-${x}-${y}`;
   }
@@ -21,6 +15,7 @@ export default class Cell {
     this.domElement = document.createElement("div");
     this.domElement.id = this.id;
     this.domElement.classList.add("cell");
+    this.domElement.onclick = this.live;
   }
 
   setCellPosition() {
@@ -31,10 +26,29 @@ export default class Cell {
   }
 
   render(gridElement) {
-    this.createCellElement();
-    this.setCellPosition();
-    gridElement.append(this.domElement);
-    this.domElement.onclick = this.live;
+    if (!this.domElement) {
+      this.createCellElement();
+      this.setCellPosition();
+      gridElement.append(this.domElement);
+    }
+
+    const { classList } = this.domElement;
+    classList.remove("alive");
+
+    if (classList.contains("die")) {
+      this.alive = false;
+      classList.remove("die");
+    }
+
+    if (classList.contains("born")) {
+      classList.remove("born");
+      this.alive = true;
+      classList.add("alive");
+    }
+
+    if (this.alive) {
+      classList.add("alive");
+    }
   }
 
   predictNeighborCoords = (offset) => {
@@ -69,21 +83,12 @@ export default class Cell {
     const neighboringCells = this.getNeighbors(cells);
     const neighborsAlive = neighboringCells.filter((cell) => cell.alive).length;
     if (this.alive) {
-      if (neighborsAlive === 0 || neighborsAlive === 1) {
-        console.log(`${this.id} - died of isolation!`);
-        this.die();
-        return;
-      }
-      if (neighborsAlive >= 4) {
-        console.log(`${this.id} - died of overcrowding!`);
-        this.die();
-        return;
+      if (neighborsAlive === 0 || neighborsAlive === 1 || neighborsAlive >= 4) {
+        this.domElement.classList.add("die");
       }
     } else {
       if (neighborsAlive === 3) {
-        console.log(`${this.id} - was born!`);
-        this.live();
-        return;
+        this.domElement.classList.add("born");
       }
     }
   };
@@ -95,6 +100,5 @@ export default class Cell {
 
   die = () => {
     this.alive = false;
-    this.domElement.classList.remove("alive");
   };
 }

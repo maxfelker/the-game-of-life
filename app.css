@@ -21,7 +21,7 @@ html body {
 
 .alive,
 .cell:hover {
-  background:#F00Baa;
+  background:#FFF;
 }
 
 .origin {
@@ -34,6 +34,14 @@ html body {
 
 .searching2 {
   border:1px solid rebeccapurple;
+}
+
+.die {
+  background:#F00;
+}
+
+.born {
+  background:#0F0;
 }
 
 #currentGeneration {

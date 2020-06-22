@@ -1,7 +1,7 @@
 export default class GameTime {
   constructor() {
     this.currentGeneration = 0;
-    this.generationsPerSecond = 1;
+    this.generationsPerSecond = 10;
     this.intervalDelay = Math.floor(1000 / this.generationsPerSecond);
 
     window.addEventListener("DOMContentLoaded", this.setUI);
